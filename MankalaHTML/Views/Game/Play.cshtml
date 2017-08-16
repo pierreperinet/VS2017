@@ -1,0 +1,319 @@
+﻿@model MankalaHTML.Models.Game
+@{
+    ViewBag.Title = "Mankala";
+}
+
+<hgroup class="title">
+    <h1>@ViewBag.Title</h1>
+</hgroup>
+
+
+<style>
+    body {
+        background-color: lightgray;
+    }
+
+    table {
+        background: lightgray;
+        width: 100%;
+        height: 100%;
+    }
+
+    td {
+        text-align: center;
+        height: 100%;
+        vertical-align: middle;
+    }
+
+    .myclassB {
+        width: 100%;
+        height: 100%;
+        border: 5px solid lightgray;
+        background-color: cyan;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .myclassA {
+        width: 100%;
+        height: 100%;
+        border: 5px solid lightgray;
+        background-color: chartreuse;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .myclassBG {
+        width: 100%;
+        height: 100%;
+        border: 5px solid lightgray;
+        background-color: cyan;
+        font-size: 40px;
+        font-weight: bold;
+    }
+
+    .myclassAG {
+        width: 100%;
+        height: 100%;
+        border: 5px solid lightgray;
+        background-color: chartreuse;
+        font-size: 40px;
+        font-weight: bold;
+    }
+</style>
+
+<button id="Reset" type="button" onclick="resetGame()">Reset</button>
+<br/>
+<br/>
+<table>
+    <tr>
+        <td><table><tr><td class='myclassBG'><label id="BG" for="BG">@Model.BG</label></td></tr></table></td>
+        <td>
+            <table>
+                <tr>
+                    <td><label class='myclassB' id="B6" for="B6">@Model.B6</label></td>
+                    <td><label class='myclassB' id="B5" for="B5">@Model.B5</label></td>
+                    <td><label class='myclassB' id="B4" for="B4">@Model.B4</label></td>
+                    <td><label class='myclassB' id="B3" for="B3">@Model.B3</label></td>
+                    <td><label class='myclassB' id="B2" for="B2">@Model.B2</label></td>
+                    <td><label class='myclassB' id="B1" for="B1">@Model.B1</label></td>
+                </tr>
+                <tr>
+                    <td><button class='myclassA' id="A1" type="button" onclick="playGame('A1')">@Model.A1</button></td>
+                    <td><button class='myclassA' id="A2" type="button" onclick="playGame('A2')">@Model.A2</button></td>
+                    <td><button class='myclassA' id="A3" type="button" onclick="playGame('A3')">@Model.A3</button></td>
+                    <td><button class='myclassA' id="A4" type="button" onclick="playGame('A4')">@Model.A4</button></td>
+                    <td><button class='myclassA' id="A5" type="button" onclick="playGame('A5')">@Model.A5</button></td>
+                    <td><button class='myclassA' id="A6" type="button" onclick="playGame('A6')">@Model.A6</button></td>
+                </tr>
+            </table>
+        </td>
+        <td><table><tr><td class="myclassAG"><label id="AG" for="AG">@Model.AG</label></tr></table></td>
+    </tr>
+</table>
+<br />
+<label id="Message" for="Message">Please choose an oponent...</label>
+<br />
+<br />
+Play against <button id="StartBot" type="button" onclick="startBot()">Mankala bot</button> or play against a <a id="mylink" href="/Game/PlayB/@Model.ID" target="_blank">human opponent</a>
+<br />
+<br />
+<p><a class="btn btn-default" href="/Game/Rules" target="popup">Rules &raquo;</a></p>
+<br />
+<p id="time">-----</p>
+<p id="webSocketStatus">-----</p>
+
+<script type="text/javascript">
+
+    var A1 = document.getElementById('A1');
+    var A2 = document.getElementById('A2');
+    var A3 = document.getElementById('A3');
+    var A4 = document.getElementById('A4');
+    var A5 = document.getElementById('A5');
+    var A6 = document.getElementById('A6');
+    var AG = document.getElementById('AG');
+    var B1 = document.getElementById('B1');
+    var B2 = document.getElementById('B2');
+    var B3 = document.getElementById('B3');
+    var B4 = document.getElementById('B4');
+    var B5 = document.getElementById('B5');
+    var B6 = document.getElementById('B6');
+    var BG = document.getElementById('BG');
+    var Message = document.getElementById('Message');
+    var WebSocketStatus = document.getElementById('webSocketStatus');
+    var Time = document.getElementById('time');
+    var handlerUrl = wsUrl() + "/WebSocketHandlerA.ashx";
+
+    var myVar = setInterval('myTimer()', 1000);
+
+    deactivateA();
+
+    var webSocket;
+
+    InitWebSocket();
+
+
+
+    function CloseWebSocket() {
+        webSocket.close();
+        webSocket = null;
+    }
+
+    function myTimer() {
+        var d = new Date();
+        var t = d.toLocaleTimeString();
+        Time.innerHTML = t;
+    }
+
+    function myStopFunction() {
+        clearInterval(myVar);
+    }
+
+    function InitWebSocket() {
+
+        // If the WebSocket object isn't initialized, we initialize it.
+        if (webSocket == undefined) {
+            webSocket = new WebSocket(handlerUrl);
+
+            // Open connection  handler.
+            webSocket.onopen = function () {
+                WebSocketStatus.innerHTML = "WebSocket opened.";
+                webSocket.send(getIdentifier());
+            };
+
+            //Message data handler.
+            webSocket.onmessage = function (e) {
+                WebSocketStatus.innerHTML = "WebSocket received message: " + e.data;
+                var data = JSON.parse(e.data);
+                updateGame(data);
+                Message.innerHTML = getMessage(data.Message);
+            };
+
+            //Close event handler.
+            webSocket.onclose = function () {
+                WebSocketStatus.innerHTML = "WebSocket closed.";
+            };
+
+            //Error event handler.
+            webSocket.onerror = function (e) {
+                WebSocketStatus.innerHTML = e.message;
+            }
+        }
+    }
+
+    function wsUrl() {
+        var l = window.location;
+        return ((l.protocol === "https:") ? "wss://" : "ws://") + l.hostname + (((l.port !== "") && (l.port !== 80) && (l.port !== 443)) ? ":" + l.port : "");
+    }
+
+    function getIdentifier() {
+        return JSON.stringify({ ID: @Model.ID, BoxName: 'AG' });
+    }
+
+    function getGame() {
+        $.get("/api/games/@Model.ID", function (data) {
+            updateGame(data);
+        });
+    }
+
+    function playGame(boxName) {
+        $.ajax({
+            url: '/api/games/@Model.ID',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ ID: @Model.ID, BoxName: boxName }),
+            success: function (response) {
+                updateGame(response);
+            },
+            error: function (jqXhr, exception) {
+                var msg;
+                if (jqXhr.status === 0) {
+                    msg = 'Not connect.\n Verify Network.';
+                } else if (jqXhr.status === 404) {
+                    msg = 'Requested page not found. [404]';
+                } else if (jqXhr.status === 500) {
+                    msg = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } else {
+                    msg = 'Uncaught Error.\n' + jqXhr.responseText;
+                }
+                alert(msg);
+            }
+        });
+    }
+
+    function resetGame() {
+        $.ajax({
+            url: '/api/games/@Model.ID',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ ID: @Model.ID, Reset: true }),
+            success: function (response) {
+                updateGame(response);
+            }
+        });
+    }
+
+    function updateGame(data) {
+        A1.innerHTML = data.A1;
+        A2.innerHTML = data.A2;
+        A3.innerHTML = data.A3;
+        A4.innerHTML = data.A4;
+        A5.innerHTML = data.A5;
+        A6.innerHTML = data.A6;
+        AG.innerHTML = data.AG;
+        B1.innerHTML = data.B1;
+        B2.innerHTML = data.B2;
+        B3.innerHTML = data.B3;
+        B4.innerHTML = data.B4;
+        B5.innerHTML = data.B5;
+        B6.innerHTML = data.B6;
+        BG.innerHTML = data.BG;
+        Message.innerHTML = getMessage(data.Message);
+
+        if (data.Message === "AG's turn!") {
+            activateA();
+        }
+        else {
+            deactivateA();
+        }
+    }
+
+    function deactivateA() {
+        A1.disabled = true;
+        A2.disabled = true;
+        A3.disabled = true;
+        A4.disabled = true;
+        A5.disabled = true;
+        A6.disabled = true;
+    }
+
+    function activateA() {
+        A1.disabled = (A1.innerHTML === "0");
+        A2.disabled = (A2.innerHTML === "0");
+        A3.disabled = (A3.innerHTML === "0");
+        A4.disabled = (A4.innerHTML === "0");
+        A5.disabled = (A5.innerHTML === "0");
+        A6.disabled = (A6.innerHTML === "0");
+    }
+
+    function getMessage(m) {
+        var text;
+        switch (m) {
+            case "AG's turn!":
+                text = "Please play...";
+                break;
+            case "BG's turn!":
+                text = "Please wait...";
+                break;
+            case "AG wins!":
+                text = "You win!";
+                break;
+            case "BG wins!":
+                text = "You loose!";
+                break;
+            default:
+                text = m;
+        }
+        return text;
+    }
+
+    function startBot() {
+        $.ajax({
+            url: '/api/MankalaMachine',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ ID: @Model.ID, Reset: true }),
+            success: function () {
+                //Message.innerHTML = "Mankala bot is ready to play against you.";
+            }
+        });
+    }
+</script>
+
+
