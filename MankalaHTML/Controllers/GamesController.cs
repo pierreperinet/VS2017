@@ -62,7 +62,7 @@ namespace MankalaHTML.Controllers
                 return response1;
             }
             var box = game.GetBox((BoxName)mclick.BoxName);
-            var play = box.Click(box.Name);
+            var next = box.Click(box.Name);
             var winner = game.GetWinner();
             if (winner != null)
             {
@@ -70,7 +70,7 @@ namespace MankalaHTML.Controllers
             }
             else
             {
-                game.Message = $"{play}'s turn!";
+                game.Message = $"{next}'s turn!";
             }
             await SendA(game);
             await SendB(game);

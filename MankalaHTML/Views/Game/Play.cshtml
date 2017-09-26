@@ -15,7 +15,6 @@
 
     table {
         background: lightgray;
-        width: 100%;
         height: 100%;
     }
 
@@ -26,38 +25,46 @@
     }
 
     .myclassB {
+        margin: 0;
         width: 100%;
         height: 100%;
+        line-height: 100%;
         border: 5px solid lightgray;
         background-color: cyan;
-        font-size: 20px;
+        font-size: 80px;
         font-weight: bold;
     }
 
     .myclassA {
+        margin: 0;
         width: 100%;
         height: 100%;
+        line-height: 100%;
         border: 5px solid lightgray;
         background-color: chartreuse;
-        font-size: 20px;
+        font-size: 80px;
         font-weight: bold;
     }
 
     .myclassBG {
+        margin: 0;
         width: 100%;
         height: 100%;
+        line-height: 100%;
         border: 5px solid lightgray;
         background-color: cyan;
-        font-size: 40px;
+        font-size: 100px;
         font-weight: bold;
     }
 
     .myclassAG {
+        margin: 0;
         width: 100%;
         height: 100%;
+        line-height: 100%;
         border: 5px solid lightgray;
         background-color: chartreuse;
-        font-size: 40px;
+        font-size: 100px;
         font-weight: bold;
     }
 </style>
@@ -67,7 +74,7 @@
 <br/>
 <table>
     <tr>
-        <td><table><tr><td class='myclassBG'><label id="BG" for="BG">@Model.BG</label></td></tr></table></td>
+        <td><table><tr><td class="myclassBG"><label id="BG" for="BG">@Model.BG</label></td></tr></table></td>
         <td>
             <table>
                 <tr>
@@ -92,7 +99,7 @@
     </tr>
 </table>
 <br />
-<label id="Message" for="Message">Please choose an oponent...</label>
+<label id="Message" for="Message">Please choose an opponent...</label>
 <br />
 <br />
 Play against <button id="StartBot" type="button" onclick="startBot()">Mankala bot</button> or play against a <a id="mylink" href="/Game/PlayB/@Model.ID" target="_blank">human opponent</a>
@@ -127,6 +134,7 @@ Play against <button id="StartBot" type="button" onclick="startBot()">Mankala bo
     var myVar = setInterval('myTimer()', 1000);
 
     deactivateA();
+    Reset.disabled = true;
 
     var webSocket;
 
@@ -167,6 +175,7 @@ Play against <button id="StartBot" type="button" onclick="startBot()">Mankala bo
                 var data = JSON.parse(e.data);
                 updateGame(data);
                 Message.innerHTML = getMessage(data.Message);
+                Reset.disabled = false;
             };
 
             //Close event handler.
