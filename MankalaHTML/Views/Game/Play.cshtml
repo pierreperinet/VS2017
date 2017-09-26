@@ -102,7 +102,9 @@
 <label id="Message" for="Message">Please choose an opponent...</label>
 <br />
 <br />
-Play against <button id="StartBot" type="button" onclick="startBot()">Mankala bot</button> or play against a <a id="mylink" href="/Game/PlayB/@Model.ID" target="_blank">human opponent</a>
+Play against a <button id="StartBot" type="button" onclick="startBot()">Mankala bot</button> 
+<br />
+or send this to a friend: <label id="HumanOpponent" for="HumanOpponent">...</label>
 <br />
 <br />
 <p><a class="btn btn-default" href="/Game/Rules" target="popup">Rules &raquo;</a></p>
@@ -127,14 +129,15 @@ Play against <button id="StartBot" type="button" onclick="startBot()">Mankala bo
     var B6 = document.getElementById('B6');
     var BG = document.getElementById('BG');
     var Message = document.getElementById('Message');
+    var HumanOpponent = document.getElementById('HumanOpponent');
     var WebSocketStatus = document.getElementById('webSocketStatus');
     var Time = document.getElementById('time');
     var handlerUrl = wsUrl() + "/WebSocketHandlerA.ashx";
-
     var myVar = setInterval('myTimer()', 1000);
 
     deactivateA();
     Reset.disabled = true;
+    HumanOpponent.innerHTML = httpUrl() + "/Game/PlayB/@Model.ID";
 
     var webSocket;
 
@@ -193,6 +196,11 @@ Play against <button id="StartBot" type="button" onclick="startBot()">Mankala bo
     function wsUrl() {
         var l = window.location;
         return ((l.protocol === "https:") ? "wss://" : "ws://") + l.hostname + (((l.port !== "") && (l.port !== 80) && (l.port !== 443)) ? ":" + l.port : "");
+    }
+
+    function httpUrl() {
+        var l = window.location;
+        return l.origin;
     }
 
     function getIdentifier() {
