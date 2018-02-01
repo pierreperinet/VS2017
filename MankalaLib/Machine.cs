@@ -269,7 +269,7 @@ namespace MankalaLib
 
         private void PlayBoxA(ref BoxName click, ref int gain, Game game, BoxName next)
         {
-            var winner = game.GetWinner();
+            var winner = game.GetWinner(next);
             if (winner == null)
             {
                 if (game.Steps.Count >= Level)
@@ -314,7 +314,7 @@ namespace MankalaLib
 
         private void PlayBoxB(ref BoxName click, ref int gain, Game game, BoxName next)
         {
-            var winner = game.GetWinner();
+            var winner = game.GetWinner(next);
             if (winner == null)
             {
                 if (game.Steps.Count >= Level)

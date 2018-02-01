@@ -63,7 +63,7 @@ namespace MankalaHTML.Controllers
             }
             var box = game.GetBox((BoxName)mclick.BoxName);
             var next = box.Click(box.Name);
-            var winner = game.GetWinner();
+            var winner = game.GetWinner(next);
             if (winner != null)
             {
                 game.Message = $"{winner} wins!";

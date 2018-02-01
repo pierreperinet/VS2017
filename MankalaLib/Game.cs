@@ -120,14 +120,19 @@ namespace MankalaLib
             return box;
         }
 
-        public BoxName? GetWinner()
+        public BoxName? GetWinner(BoxName next)
         {
-            if (A1.Value == 0 &&
+            if (next == BoxName.AG &&
+                A1.Value == 0 &&
                 A2.Value == 0 &&
                 A3.Value == 0 &&
                 A4.Value == 0 &&
                 A5.Value == 0 &&
-                A6.Value == 0 ||
+                A6.Value == 0)
+            {
+                return (GetAGains() >= GetBGains() ? BoxName.AG : BoxName.BG);
+            }
+            if (next == BoxName.BG &&
                 B1.Value == 0 &&
                 B2.Value == 0 &&
                 B3.Value == 0 &&
@@ -135,9 +140,7 @@ namespace MankalaLib
                 B5.Value == 0 &&
                 B6.Value == 0)
             {
-                if (GetAGains() >= GetBGains())
-                    return BoxName.AG;
-                return BoxName.BG;
+                return (GetAGains() >= GetBGains() ? BoxName.AG : BoxName.BG);
             }
             return null;
         }

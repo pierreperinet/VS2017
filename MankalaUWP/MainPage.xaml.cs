@@ -61,7 +61,7 @@ namespace MankalaUWP
 
             if (next == BoxName.AG)
             {
-                var winner1 = Game.GetWinner();
+                var winner1 = Game.GetWinner(next);
                 if (winner1 != null)
                 {
                     Message.Text = winner1 == BoxName.AG ? "You win!" : "You loose!";
@@ -69,7 +69,7 @@ namespace MankalaUWP
                 return;
             }
             DeactivateA();
-            var winner = Game.GetWinner();
+            var winner = Game.GetWinner(next);
             if (winner != null)
             {
                 Message.Text = winner == BoxName.AG ? "You win!" : "You loose!";
@@ -82,7 +82,7 @@ namespace MankalaUWP
                 var mbox = Game.GetBox(mboxName);
                 next = mbox.Click(BoxName.BG);
                 RedrawBoxes();
-                winner = Game.GetWinner();
+                winner = Game.GetWinner(next);
                 if (winner == null) continue;
                 Message.Text = winner == BoxName.AG ? "You win!" : "You loose!";
                 return;

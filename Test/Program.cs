@@ -144,7 +144,7 @@ namespace Test
 
         private void PlayBoxA(ref BoxName click, ref int gain, Game game, BoxName next)
         {
-            var winner = game.GetWinner();
+            var winner = game.GetWinner(next);
             if (winner == null)
             {
                 if (game.Steps.Count >= level)
@@ -189,7 +189,7 @@ namespace Test
 
         private void PlayBoxB(ref BoxName click, ref int gain, Game game, BoxName next)
         {
-            var winner = game.GetWinner();
+            var winner = game.GetWinner(next);
             if (winner == null)
             {
                 if (game.Steps.Count >= level)
