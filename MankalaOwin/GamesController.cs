@@ -112,7 +112,7 @@ namespace MankalaOwin
         {
             var mgame = GetModelsGame(game);
             var requestJson = JsonConvert.SerializeObject(mgame);
-            //KEEP await WebSocketHandlerA.Send(new GameIdentifier { ID = game.ID, BoxName = Models.BoxName.AG }, requestJson);
+            //KEEP await WebSocketHandlerA.Send(new Player { GameId = game.ID, BoxName = Models.BoxName.AG }, requestJson);
             await Task.FromResult<object>(null);
         }
 
@@ -120,7 +120,7 @@ namespace MankalaOwin
         {
             var mgame = GetModelsGame(game);
             var requestJson = JsonConvert.SerializeObject(mgame);
-            //KEEP await WebSocketHandlerA.Send(new GameIdentifier { ID = game.ID, BoxName = Models.BoxName.BG }, requestJson);
+            //KEEP await WebSocketHandlerA.Send(new Player { GameId = game.ID, BoxName = Models.BoxName.BG }, requestJson);
             await Task.FromResult<object>(null);
         }
     }

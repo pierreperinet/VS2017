@@ -1,8 +1,8 @@
 ﻿namespace MankalaHTML.Models
 {
-    public class GameIdentifier
+    public class Player
     {
-        public int ID { get; set; }
+        public int GameId { get; set; }
         public BoxName BoxName { get; set; }
     }
 }

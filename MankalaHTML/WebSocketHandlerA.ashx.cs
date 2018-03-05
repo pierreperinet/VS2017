@@ -55,38 +55,29 @@ namespace MankalaHTML
                 {
                     byte[] payloadData = receivedDataBuffer.Array.Where(b => b != 0).ToArray();
                     string receiveString = Encoding.UTF8.GetString(payloadData, 0, payloadData.Length);
-                    var gameIdentifier = JsonConvert.DeserializeObject<GameIdentifier>(receiveString);
-                    WebSockets[$"{gameIdentifier.BoxName}--{gameIdentifier.ID}"] = webSocket;
-                    var game = _db.GetGame(gameIdentifier.ID);
-                    if (WebSockets.ContainsKey($"{BoxName.AG}--{gameIdentifier.ID}") && WebSockets.ContainsKey($"{BoxName.BG}--{gameIdentifier.ID}"))
+                    var player = JsonConvert.DeserializeObject<Player>(receiveString);
+                    WebSockets[$"{player.BoxName}--{player.GameId}"] = webSocket;
+                    var game = _db.GetGame(player.GameId);
+                    if (WebSockets.ContainsKey($"{BoxName.AG}--{player.GameId}") && WebSockets.ContainsKey($"{BoxName.BG}--{player.GameId}"))
                     {
                         game.Message = "AG's turn!";
                         var mgame = GetModelsGame(game);
                         var mgameJson = JsonConvert.SerializeObject(mgame);
-                        await Send(WebSockets[$"{BoxName.AG}--{gameIdentifier.ID}"], mgameJson);
-                        await Send(WebSockets[$"{BoxName.BG}--{gameIdentifier.ID}"], mgameJson);
+                        await Send(WebSockets[$"{BoxName.AG}--{player.GameId}"], mgameJson);
+                        await Send(WebSockets[$"{BoxName.BG}--{player.GameId}"], mgameJson);
                     }
                 }
             }
         }
 
-        private static async Task Send(WebSocket webSocket, string message)
+        public static async Task Send(Player player, string message)
         {
-            if (webSocket?.State == WebSocketState.Open)
-            {
-                var cancellationToken = new CancellationToken();
-                byte[] buffer = Encoder.GetBytes(message);
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, cancellationToken);
-            }
-            else
-            {
-                Debug.WriteLine("Web socket failed to send message");
-            }
+            var webSocket = WebSockets[$"{player.BoxName}--{player.GameId}"];
+            await Send(webSocket, message);
         }
 
-        public static async Task Send(GameIdentifier gameIdentifier, string message)
+        private static async Task Send(WebSocket webSocket, string message)
         {
-            var webSocket = WebSockets[$"{gameIdentifier.BoxName}--{gameIdentifier.ID}"];
             if (webSocket?.State == WebSocketState.Open)
             {
                 var cancellationToken = new CancellationToken();

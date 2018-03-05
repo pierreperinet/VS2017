@@ -55,8 +55,8 @@ namespace MankalaHTML.Controllers
             {
                 game.Reset();
                 game.Message = "AG's turn!";
-                await SendA(game);
-                await SendB(game);
+                await SendGame(Models.BoxName.AG, game);
+                await SendGame(Models.BoxName.BG, game);
                 var response1 = Request.CreateResponse(HttpStatusCode.OK, GetModelsGame(game), "application/json");
                 response1.Headers.Location = new Uri(Request.RequestUri, $"Games/{game.ID}");
                 return response1;
@@ -72,8 +72,8 @@ namespace MankalaHTML.Controllers
             {
                 game.Message = $"{next}'s turn!";
             }
-            await SendA(game);
-            await SendB(game);
+            await SendGame(Models.BoxName.AG, game);
+            await SendGame(Models.BoxName.BG, game);
             var response = Request.CreateResponse(HttpStatusCode.Accepted, GetModelsGame(game), "application/json");
             response.Headers.Location = new Uri(Request.RequestUri, $"Games/{game.ID}");
             return response;
@@ -108,18 +108,11 @@ namespace MankalaHTML.Controllers
             };
         }
 
-        private async Task SendA(MankalaLib.Game game)
+        private async Task SendGame(Models.BoxName boxName, MankalaLib.Game game)
         {
             var mgame = GetModelsGame(game);
             var requestJson = JsonConvert.SerializeObject(mgame);
-            await WebSocketHandlerA.Send(new GameIdentifier { ID = game.ID, BoxName = Models.BoxName.AG }, requestJson);
-        }
-
-        private async Task SendB(MankalaLib.Game game)
-        {
-            var mgame = GetModelsGame(game);
-            var requestJson = JsonConvert.SerializeObject(mgame);
-            await WebSocketHandlerA.Send(new GameIdentifier { ID = game.ID, BoxName = Models.BoxName.BG }, requestJson);
+            await WebSocketHandlerA.Send(new Player { GameId = game.ID, BoxName = boxName }, requestJson);
         }
     }
 }

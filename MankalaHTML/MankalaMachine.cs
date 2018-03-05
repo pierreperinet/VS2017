@@ -32,8 +32,8 @@ namespace MankalaHTML
                     var wsUri = new Uri($"ws://{requestUri.Host}:{requestUri.Port}/WebSocketHandlerA.ashx");
                     _socket = new ClientWebSocket();
                     _socket.ConnectAsync(wsUri, cts.Token).Wait();
-                    var gameIdentifier = new GameIdentifier { BoxName = BoxName.BG, ID = machineId };
-                    var jsonId = JsonConvert.SerializeObject(gameIdentifier);
+                    var player = new Player { BoxName = BoxName.BG, GameId = machineId };
+                    var jsonId = JsonConvert.SerializeObject(player);
                     await SendAsync(jsonId);
                     while (true)
                     {

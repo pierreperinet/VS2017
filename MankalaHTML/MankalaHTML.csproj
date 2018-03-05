@@ -190,7 +190,7 @@
     <Compile Include="MankalaMachine.cs" />
     <Compile Include="Models\Click.cs" />
     <Compile Include="Models\Game.cs" />
-    <Compile Include="Models\GameIdentifier.cs" />
+    <Compile Include="Models\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestClient.cs" />
     <Compile Include="WebSocketHandlerA.ashx.cs">
