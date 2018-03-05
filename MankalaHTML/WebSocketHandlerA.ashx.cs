@@ -70,7 +70,7 @@ namespace MankalaHTML
             }
         }
 
-        public static async Task Send(WebSocket webSocket, string message)
+        private static async Task Send(WebSocket webSocket, string message)
         {
             if (webSocket?.State == WebSocketState.Open)
             {
